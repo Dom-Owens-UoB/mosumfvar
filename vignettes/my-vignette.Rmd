@@ -1,0 +1,79 @@
+---
+title: 'nausea: Nowcasting Under Structural Breaks'
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  rmarkdown::html_vignette: default
+vignette: |
+  %\VignetteIndexEntry{nausea} %\VignetteEngine{knitr::rmarkdown} \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r} 
+library("mosumfvar")
+library("nowcasting")
+```
+
+## Getting data
+
+`get_data` will download current vintage data from the NYFED and FREDMD databases up to a given date, defaulting to June 2021. These are subjected to stationarity transforms.
+
+```{r}
+data_vignette <- get_data()
+```
+
+By default, we include a version up to May 2021.
+```{r}
+data(panel)
+```
+
+
+
+## Data segmentation with `mosumfvar`
+
+Based on the `mosumvar` package and methodology, `mosumfvar` will perform change point analysis on the panel assuming a static factor model with low-dimensional vector autoregression (VAR) dynamics on the factors. 
+The number of factors `q`,
+the VAR order `order`, 
+and the bandwidth `G` can all be selected from the data. 
+ 
+```{r}
+mosumfvar_out <- mosumfvar(panel$panel, q = 2, order = 1, method = "Score") 
+```
+
+
+
+## Forecasting
+
+`ar.weighted` can be used to fit a VAR to the factor series, where the data is weighted adaptively to the estimated change points.
+The choices are for the weights are `linear`,`exp`, or `robust`. 
+
+```{r}
+# forecast factors
+factors <- mosumfvar_out$fm$factors
+ar.mod <- ar.weighted(factors, cps = mosumfvar_out$seg$cps)
+factor_fcast <- predict(ar.mod, factors, n.ahead = 5)
+ts.plot(factor_fcast$pred, main = "factor forecast")
+# forecast panel
+panel_fcast <- factor_fcast$pred %*% t(mosumfvar_out$fm$loadings)
+ts.plot(panel_fcast, main = "panel forecast")
+```
+
+
+
+## Nowcasting
+
+Nowcasting of the GDP component can be performed with e.g. a linear regression model via `lm`, which permits use of the `predict` method. 
+
+```{r}
+lm_data <- data.frame(gdp = panel$gdp, factors)
+gdp_lm <- lm(gdp ~ ., data = lm_data)
+gdp_lm
+plot.ts(gdp_lm$fitted.values, xlab = "Time (Quarter)", ylab = "smoothed change in gdp")
+predict(gdp_lm, newdata = data.frame(gdp = NA, panel_fcast))
+```
+
+

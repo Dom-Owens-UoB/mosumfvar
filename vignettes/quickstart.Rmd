@@ -1,0 +1,36 @@
+---
+title: 'Quick start for mosumfvar'
+output:
+  pdf_document: default
+  rmarkdown::html_vignette: default
+vignette: |
+  %\VignetteIndexEntry{nausea} %\VignetteEngine{knitr::rmarkdown} \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r} 
+library(mosumfvar)
+```
+
+This vignette is a quick start guide to nowcasting with `mosumfvar`. For more detail, see the other vignette.
+
+```{r}
+#load data
+data(panel)
+# data segmentation
+mosumfvar_out <- mosumfvar(panel$panel, q = 2, order = 1, method = "Score") 
+# forecast factors
+factors <- mosumfvar_out$fm$factors
+ar.mod <- ar.weighted(factors, cps = mosumfvar_out$seg$cps)
+factor_fcast <- predict(ar.mod, factors, n.ahead = 5)
+# forecast panel
+panel_fcast <- factor_fcast$pred %*% t(mosumfvar_out$fm$loadings)
+# nowcast GDP
+lm_data <- data.frame(gdp = panel$gdp, factors)
+gdp_lm <- lm(gdp ~ ., data = lm_data)  
+predict(gdp_lm, newdata = data.frame(gdp = NA, panel_fcast))
+```
+
