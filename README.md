@@ -1,4 +1,4 @@
-# Placement
+# mosumfvar
 
 package `mosumfvar` installable via
 
