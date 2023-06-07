@@ -51,7 +51,7 @@ mosumfvar <- function(x,
   method <- match.arg(method, c("Score","Wald"))
   algo <- match.arg(algo, c("mosumvar","univ","ms"))
   fm <- fnets::fnets.factor.model(t(xx), q = q.method, center = FALSE, fm.restricted = TRUE)
-  r <- fm$q
+  q <- fm$q
 
   f <- fm$factors[,1:q, drop = FALSE]
   if(is.null(order)){

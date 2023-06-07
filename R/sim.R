@@ -22,22 +22,22 @@
 #' @export
 #'
 #' @examples data <- fvar.sim(500, cps = 200)
-fvar.sim <- function (n, p = 100, r = 2, order = 1, cps = c(), signal = 0.7,
+fvar.sim <- function (n, p = 100, q = 2, order = 1, cps = c(), signal = 0.7,
                       error.dist = c("normal", "t", "garch"), P1 = NULL, Q1 = NULL, df = 3){
   error.dist <- match.arg(error.dist, c("normal", "t", "garch"))
-  mu = rep(0, r)
-  Sigma = diag(1,r)
+  mu = rep(0, q)
+  Sigma = diag(1,q)
   if(error.dist == "garch"){
     if(is.null(P1)) P1 <- Sigma
     if(is.null(Q1)) Q1 <- Sigma
   }
   cps <- c(0, cps, n)
 
-  lam <- matrix(runif(r*p, .2,.8), r, p)
+  lam <- matrix(runif(q*p, .2,.8), q, p)
 
 
   #var params
-  A1 <- matrix(-0.1, nrow = r, ncol = r)
+  A1 <- matrix(-0.1, nrow = q, ncol = q)
   diag(A1) <- 0.7
   A1 <- signal * A1 / (order*norm(A1, "F")^2)
   A2 <- (-1) * A1
@@ -53,9 +53,9 @@ fvar.sim <- function (n, p = 100, r = 2, order = 1, cps = c(), signal = 0.7,
   }
 
   #generate data
-  f <- matrix(0, nrow = n, ncol = r)
-  q <- length(cps) - 1
-  for (ii in 1:q) {
+  f <- matrix(0, nrow = n, ncol = q)
+  n.cps <- length(cps) - 1
+  for (ii in 1:n.cps) {
     if(ii%%2 == 0)  coeffs <- A1list else coeffs <- A2list
     n_ii <- cps[ii+1]-cps[ii]
     f[(cps[ii]+1):cps[ii+1],] <- mosumvar::VAR.sim(n_ii, mu, Sigma, coeffs, error.dist, P1, Q1, df)
@@ -63,7 +63,7 @@ fvar.sim <- function (n, p = 100, r = 2, order = 1, cps = c(), signal = 0.7,
   if(error.dist == "normal"){
     e <- matrix(rnorm(n*p),n,p)
   } else if(error.dist == "t"){
-    e <- matrix(rt(n*p, df),n,p) * ((df-2)/df)
+    e <- matrix(rt(n*p, df),n,p) * sqrt(df/(df-2))
   } else if(error.dist == "garch"){
     Sigma <- diag(1, p)
     P1 <- Q1 <- Sigma/2
