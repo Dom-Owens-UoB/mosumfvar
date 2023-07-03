@@ -50,7 +50,7 @@ mosumfvar <- function(x,
 
   method <- match.arg(method, c("Score","Wald"))
   algo <- match.arg(algo, c("mosumvar","univ","ms"))
-  fm <- fnets::fnets.factor.model(t(xx), q = q.method, center = FALSE, fm.restricted = TRUE)
+  fm <- fnets::fnets.factor.model((xx), q = q.method, center = FALSE, fm.restricted = TRUE)
   q <- fm$q
 
   f <- fm$factors[,1:q, drop = FALSE]
@@ -70,7 +70,7 @@ mosumfvar <- function(x,
                                      var.estim = var.estim, alpha = alpha,
                                      criterion = criterion, nu = nu, do.bootstrap = do.bootstrap, n.bootstrap = n.bootstrap, do.plot = do.plot)
   }
-  fm$mean.x <- t(mean.x)
+  fm$mean.x <- (mean.x)
   out <- list(
     seg = cp_mosumvar,
     fm = fm
