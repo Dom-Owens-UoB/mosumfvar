@@ -2,7 +2,7 @@
 #'
 #' @param n sample size
 #' @param p number of series
-#' @param r factor number
+#' @param q factor number
 #' @param order VAR order
 #' @param cps change points
 #' @param signal size of parameters

@@ -22,7 +22,7 @@ ar.weighted(x, cps = NULL, weight.method = c("linear", "exp", "robust"), ...)
 Fit an autoregressive time series model to the data, using weighted estimators
 }
 \examples{
-fm <- fnets::fnets.factor.model(t(panel$panel), fm.restricted = TRUE, q = 2)
+fm <- fnets::fnets.factor.model((panel$panel), fm.restricted = TRUE, q = 2)
 mod <- ar.weighted(fm$factors, cps = 100)
 predict(mod, fm$factors, n.ahead = 5)
 }

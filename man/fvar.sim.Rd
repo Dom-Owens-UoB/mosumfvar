@@ -7,7 +7,7 @@
 fvar.sim(
   n,
   p = 100,
-  r = 2,
+  q = 2,
   order = 1,
   cps = c(),
   signal = 0.7,
@@ -22,7 +22,7 @@ fvar.sim(
 
 \item{p}{number of series}
 
-\item{r}{factor number}
+\item{q}{factor number}
 
 \item{order}{VAR order}
 

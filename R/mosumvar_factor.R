@@ -91,7 +91,7 @@ mosumfvar <- function(x,
 #' @return \code{ar.weighted} object, see \link[stats]{ar}
 #' @export
 #'
-#' @examples fm <- fnets::fnets.factor.model(t(panel$panel), fm.restricted = TRUE, q = 2)
+#' @examples fm <- fnets::fnets.factor.model((panel$panel), fm.restricted = TRUE, q = 2)
 #' mod <- ar.weighted(fm$factors, cps = 100)
 #' predict(mod, fm$factors, n.ahead = 5)
 ar.weighted <- function(x, cps = NULL, weight.method = c("linear","exp","robust"), ...){
@@ -130,7 +130,7 @@ ar.weighted <- function(x, cps = NULL, weight.method = c("linear","exp","robust"
 #' @return \code{lm} object, see \link[stats]{lm}
 #' @export
 #'
-#' @examples fm <- fnets::fnets.factor.model(t(panel$panel), fm.restricted = TRUE, q = 2)
+#' @examples fm <- fnets::fnets.factor.model((panel$panel), fm.restricted = TRUE, q = 2)
 #' lm.weighted(panel$gdp, fm$factors, cps = 100)
 lm.weighted <- function(y, x, intercept = FALSE, cps = NULL, weight.method = c("linear","exp","robust"), ...){
   weight.method <- match.arg(weight.method, c("linear","exp","robust"))

@@ -33,6 +33,6 @@ lm.weighted(
 Fit a linear model to the data, using weighted estimators
 }
 \examples{
-fm <- fnets::fnets.factor.model(t(panel$panel), fm.restricted = TRUE, q = 2)
+fm <- fnets::fnets.factor.model((panel$panel), fm.restricted = TRUE, q = 2)
 lm.weighted(panel$gdp, fm$factors, cps = 100)
 }
